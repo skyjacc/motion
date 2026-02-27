@@ -6,126 +6,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S Y N D I C A T E</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Premium undetected software solutions.">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap"
-        rel="stylesheet">
+    <meta name="description" content="Premium undetected software solutions. Coming soon.">
+    <!-- For icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
-    <div class="dynamic-island-container">
-        <div class="dynamic-island">
-            <div class="island-content default-state">
-                <div class="status-dot"></div>
-                <span class="island-text">System Undetected</span>
+    <!-- Premium Dynamic Island -->
+    <div class="dynamic-island-wrapper">
+        <div class="dynamic-island interactable-island" id="island">
+            <!-- State 1: Default (Idle) -->
+            <div class="island-content state-default">
+                <div class="status-ring">
+                    <div class="ring-core"></div>
+                </div>
+                <span class="island-text">AWAITING DEPLOYMENT</span>
             </div>
-            <div class="island-content hover-state">
-                <span class="island-icon">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
-                </span>
-                <span class="island-text highlight">Purchase Access</span>
+
+            <!-- State 2: Hover (Expand slightly) -->
+            <div class="island-content state-hover">
+                <i data-feather="terminal" class="icon-small"></i>
+                <span class="island-text">VIEW AUTH HASH</span>
             </div>
-            <div class="island-content verify-state">
-                <span class="island-icon success">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 6L9 17l-5-5" />
-                    </svg>
-                </span>
-                <span class="island-text">Code Copied</span>
+
+            <!-- State 3: Expanded (Show Code) -->
+            <div class="island-content state-expanded">
+                <div class="hash-display">
+                    <span class="hash-label">AUTH HASH:</span>
+                    <code id="vhash">V58-7fI-cdN-</code>
+                </div>
+                <button class="icon-btn" onclick="copyHash(event)" aria-label="Copy Hash">
+                    <i data-feather="copy" class="icon-small"></i>
+                </button>
+            </div>
+
+            <!-- State 4: Copied Success -->
+            <div class="island-content state-success">
+                <i data-feather="check-circle" class="icon-small success-icon"></i>
+                <span class="island-text">HASH ACQUIRED</span>
             </div>
         </div>
     </div>
 
-    <div class="ambient-background">
-        <div class="liquid-blob blob-1"></div>
-        <div class="liquid-blob blob-2"></div>
-        <div class="noise-overlay"></div>
-        <div class="grid-overlay"></div>
+    <!-- Background Elements -->
+    <div class="bg-elements">
+        <div class="liquid-shape shape-1"></div>
+        <div class="liquid-shape shape-2"></div>
+        <div class="noise"></div>
+        <div class="grid"></div>
+        <!-- Center glow behind the panel -->
+        <div class="center-glow"></div>
     </div>
 
-    <main class="hero">
-        <div class="liquid-panel">
-            <div class="panel-header">
-                <div class="window-controls">
-                    <span class="control red"></span>
-                    <span class="control yellow"></span>
-                    <span class="control green"></span>
+    <main class="container">
+        <div class="glass-module interactable main-panel" id="main-panel">
+            <header class="module-header">
+                <div class="controls">
+                    <div class="btn close"></div>
+                    <div class="btn minimize"></div>
+                    <div class="btn maximize"></div>
                 </div>
-                <div class="status-badge">v2.4.1 // STABLE</div>
-            </div>
+                <div class="version">SYS_STATUS: STANDBY</div>
+            </header>
 
-            <h1 class="title">
-                DOMINATE<br>
-                <span class="glitch" data-text="THE LOBBY">THE LOBBY</span>
-            </h1>
-
-            <p class="description">
-                Private, invite-only software featuring advanced kernel-level bypasses, external rendering, and silent
-                aim assistance. Unmatched security since 2021.
-            </p>
-
-            <div class="verification-wrapper">
-                <div class="verification-header">
-                    <span class="terminal-prompt">></span>
-                    <span class="terminal-text type-animation">await verification_token()</span>
+            <div class="content-wrapper">
+                <div class="status-badge-large">
+                    <div class="indicator pulse slow"></div>
+                    NETWORK OFFLINE
                 </div>
-                <div class="code-container">
-                    <code id="verifyCode">V58-7fI-cdN-</code>
-                    <button class="liquid-btn icon-btn copy-btn" onclick="copyCode()" aria-label="Copy code">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
+
+                <h1 class="logo-text glitch" data-text="SYNDICATE">SYNDICATE</h1>
+
+                <p class="subtitle typing-effect">
+                    A new era of undetected software is loading.<br>
+                    Private ring-0 framework. Invite only.
+                </p>
+
+                <div class="countdown-display">
+                    <span>COMING SOON</span>
+                </div>
+
+                <div class="action-area">
+                    <button class="primary-btn interactable" onclick="document.getElementById('island').click()">
+                        <span class="btn-text">REQUEST ACCESS</span>
+                        <div class="btn-glow"></div>
                     </button>
+                    <!-- Verify code is now purely in the Dynamic Island -->
+                    <div class="sub-hint">Operations commence Q3 2026.</div>
                 </div>
-                <div class="terminal-footer">
-                    <span class="expiry">Expires: 02.28.2026</span>
-                </div>
-            </div>
-
-            <div class="action-group">
-                <a href="#" class="liquid-btn primary-btn" onclick="window.location.reload();">
-                    <span class="btn-content">
-                        Initialize Session
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </span>
-                    <div class="liquid-bg"></div>
-                </a>
             </div>
         </div>
     </main>
 
     <script>
-        function copyCode() {
-            const code = document.getElementById('verifyCode').innerText;
-            navigator.clipboard.writeText(code);
+        // Initialize Icons
+        feather.replace();
 
-            const island = document.querySelector('.dynamic-island');
-            island.classList.add('copied');
+        // Advanced Dynamic Island Logic
+        const island = document.getElementById('island');
+        let islandState = 'default'; // default, expanded, success
+        let resetTimeout;
 
-            setTimeout(() => {
-                island.classList.remove('copied');
-            }, 2500);
+        island.addEventListener('click', (e) => {
+            // Prevent trigger if clicking the copy button specifically
+            if (e.target.closest('.icon-btn')) return;
+
+            if (islandState === 'default') {
+                island.classList.add('expanded');
+                islandState = 'expanded';
+
+                // Auto close after 5 seconds if no interaction
+                startResetTimer();
+            } else if (islandState === 'expanded') {
+                island.classList.remove('expanded');
+                islandState = 'default';
+                clearTimeout(resetTimeout);
+            }
+        });
+
+        // Pause reset timer when interacting with expanded island
+        island.addEventListener('mouseenter', () => {
+            if (islandState === 'expanded') {
+                clearTimeout(resetTimeout);
+            }
+        });
+
+        island.addEventListener('mouseleave', () => {
+            if (islandState === 'expanded') {
+                startResetTimer();
+            }
+            // Removing a custom hover class dynamically to prevent sticky hover states
+            island.classList.remove('force-hover');
+        });
+
+        function startResetTimer() {
+            clearTimeout(resetTimeout);
+            resetTimeout = setTimeout(() => {
+                if (islandState === 'expanded') {
+                    island.classList.remove('expanded');
+                    islandState = 'default';
+                }
+            }, 5000);
         }
 
-        // Add subtle mouse tracking for liquid glass effect
+        // Copy Hash with Island animation
+        window.copyHash = function (e) {
+            e.stopPropagation(); // Prevent closing the island immediately
+
+            const hash = document.getElementById('vhash').innerText;
+            navigator.clipboard.writeText(hash);
+
+            // Trigger success state
+            island.classList.remove('expanded');
+            island.classList.add('success');
+            islandState = 'success';
+
+            clearTimeout(resetTimeout);
+
+            setTimeout(() => {
+                island.classList.remove('success');
+                islandState = 'default';
+            }, 2000);
+        }
+
+        // Liquid Glass Mouse Tracking Effect
+        const interactables = document.querySelectorAll('.interactable, .interactable-island');
+
         document.addEventListener('mousemove', (e) => {
-            const panels = document.querySelectorAll('.liquid-panel, .liquid-btn');
-            panels.forEach(panel => {
-                const rect = panel.getBoundingClientRect();
+            interactables.forEach(el => {
+                const rect = el.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
 
-                panel.style.setProperty('--mouse-x', `${x}px`);
-                panel.style.setProperty('--mouse-y', `${y}px`);
+                el.style.setProperty('--x', `${x}px`);
+                el.style.setProperty('--y', `${y}px`);
+
+                // 3D Tilt effect only for main panel
+                if (el.id === 'main-panel') {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * -1.5; // max tilt 1.5deg
+                    const rotateY = ((x - centerX) / centerX) * 1.5;
+
+                    el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                }
             });
+        });
+
+        // Reset tilt on leave
+        document.getElementById('main-panel').addEventListener('mouseleave', function () {
+            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            this.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+            setTimeout(() => {
+                this.style.transition = 'none'; // Re-enable instantaneous mouse tracking
+            }, 500);
         });
     </script>
 </body>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNDICATE — Void Protocol</title>
+    <meta name="description" content="Premium undetected software. Private ring-0 framework.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ease: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            cursor: crosshair;
+        }
+
+        /* ===== CANVAS BACKGROUND ===== */
+        canvas#bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ===== GRAIN OVERLAY ===== */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.05;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ===== VIGNETTE ===== */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
+        }
+
+        /* ===== LAYOUT ===== */
+        .scene {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* ===== CENTRAL ORB ===== */
+        .orb-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            z-index: 5;
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            will-change: transform;
+        }
+
+        .orb {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            background:
+                radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.25), transparent 50%),
+                radial-gradient(circle at 65% 70%, rgba(255, 255, 255, 0.08), transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(20, 20, 20, 0.9), rgba(0, 0, 0, 1));
+            box-shadow:
+                0 0 80px rgba(255, 255, 255, 0.08),
+                0 0 200px rgba(255, 255, 255, 0.03),
+                inset 0 0 60px rgba(0, 0, 0, 0.8),
+                inset 8px -8px 30px rgba(255, 255, 255, 0.12);
+            animation: orbBreathe 6s ease-in-out infinite;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Glass refraction highlight */
+        .orb::before {
+            content: '';
+            position: absolute;
+            top: 12%;
+            left: 18%;
+            width: 45%;
+            height: 35%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 60%, transparent 100%);
+            filter: blur(8px);
+            animation: highlightShift 8s ease-in-out infinite alternate;
+        }
+
+        /* Rim light */
+        .orb::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.03);
+        }
+
+        @keyframes orbBreathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 80px rgba(255, 255, 255, 0.08), 0 0 200px rgba(255, 255, 255, 0.03), inset 0 0 60px rgba(0, 0, 0, 0.8), inset 8px -8px 30px rgba(255, 255, 255, 0.12);
+            }
+
+            50% {
+                transform: scale(1.04);
+                box-shadow: 0 0 120px rgba(255, 255, 255, 0.12), 0 0 250px rgba(255, 255, 255, 0.05), inset 0 0 80px rgba(0, 0, 0, 0.7), inset 8px -8px 40px rgba(255, 255, 255, 0.18);
+            }
+        }
+
+        @keyframes highlightShift {
+            0% {
+                top: 12%;
+                left: 18%;
+                transform: rotate(0deg);
+                opacity: 0.8;
+            }
+
+            100% {
+                top: 15%;
+                left: 22%;
+                transform: rotate(8deg);
+                opacity: 1;
+            }
+        }
+
+        /* ===== ORBITAL RING ===== */
+        .orbital-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            transform: translate(-50%, -50%) rotateX(70deg);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            animation: ringRotate 30s linear infinite;
+            z-index: 4;
+        }
+
+        .orbital-ring::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #fff, 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .orbital-ring-2 {
+            width: 480px;
+            height: 480px;
+            border-color: rgba(255, 255, 255, 0.03);
+            animation-duration: 45s;
+            animation-direction: reverse;
+        }
+
+        .orbital-ring-2::before {
+            width: 4px;
+            height: 4px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes ringRotate {
+            from {
+                transform: translate(-50%, -50%) rotateX(70deg) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotateX(70deg) rotate(360deg);
+            }
+        }
+
+        /* ===== TEXT CONTENT ===== */
+        .content {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .content>* {
+            pointer-events: auto;
+        }
+
+        .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tag .dot {
+            width: 5px;
+            height: 5px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #fff;
+            animation: pulseDot 2.5s infinite;
+        }
+
+        @keyframes pulseDot {
+
+            0%,
+            100% {
+                box-shadow: 0 0 6px #fff;
+                opacity: 1;
+            }
+
+            50% {
+                box-shadow: 0 0 14px #fff;
+                opacity: 0.6;
+            }
+        }
+
+        .title {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(2rem, 6vw, 4.5rem);
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 80px rgba(255, 255, 255, 0.1);
+            line-height: 1;
+        }
+
+        .desc {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.8;
+            margin-bottom: 50px;
+            max-width: 380px;
+            font-weight: 400;
+        }
+
+        /* ===== GLASS BUTTON ===== */
+        .void-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 36px;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            color: #fff;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.5s var(--ease);
+            outline: none;
+            text-decoration: none;
+        }
+
+        .void-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .void-btn:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1), inset 0 0 30px rgba(255, 255, 255, 0.05);
+            transform: scale(1.04);
+        }
+
+        .void-btn:hover::before {
+            opacity: 1;
+        }
+
+        .void-btn .arrow {
+            display: inline-block;
+            transition: transform 0.4s var(--ease);
+            font-size: 1rem;
+        }
+
+        .void-btn:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        /* ===== BOTTOM BAR ===== */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .bottom-bar a {
+            color: rgba(255, 255, 255, 0.35);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .bottom-bar a:hover {
+            color: #fff;
+        }
+
+        /* ===== TOP CORNERS ===== */
+        .corner-label {
+            position: fixed;
+            z-index: 30;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .corner-tl {
+            top: 30px;
+            left: 40px;
+        }
+
+        .corner-tr {
+            top: 30px;
+            right: 40px;
+            text-align: right;
+        }
+
+        /* ===== SCANLINE EFFECT ===== */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.08) 2px,
+                    rgba(0, 0, 0, 0.08) 4px);
+            opacity: 0.3;
+        }
+
+        /* ===== CURSOR GLOW FOLLOWER ===== */
+        .cursor-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.035), transparent 60%);
+            pointer-events: none;
+            z-index: 4;
+            will-change: transform;
+        }
+
+        /* ===== INTRO ANIMATION (slow + buttery) ===== */
+        .scene {
+            animation: fadeInScene 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInScene {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .title {
+            animation: revealTitle 2.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+        }
+
+        @keyframes revealTitle {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+                filter: blur(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        .desc {
+            animation: revealTitle 2.5s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
+        }
+
+        .void-btn {
+            animation: revealTitle 2.5s cubic-bezier(0.16, 1, 0.3, 1) 1.3s both;
+        }
+
+        .tag {
+            animation: revealTitle 2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+        }
+
+        .corner-label {
+            animation: revealTitle 2.5s cubic-bezier(0.16, 1, 0.3, 1) 1.5s both;
+        }
+
+        .bottom-bar {
+            animation: revealTitle 2.5s cubic-bezier(0.16, 1, 0.3, 1) 1.8s both;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .orb-wrapper {
+                width: 180px;
+                height: 180px;
+            }
+
+            .orbital-ring {
+                width: 260px;
+                height: 260px;
+            }
+
+            .orbital-ring-2 {
+                width: 320px;
+                height: 320px;
+            }
+
+            .bottom-bar {
+                padding: 15px 20px;
+            }
+
+            .corner-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Particle Background Canvas -->
+    <canvas id="bg"></canvas>
+
+    <!-- Overlays -->
+    <div class="grain"></div>
+    <div class="vignette"></div>
+    <div class="scanlines"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Corner Labels -->
+    <div class="corner-label corner-tl">SYN//PROTOCOL<br>V0.0.1-ALPHA</div>
+    <div class="corner-label corner-tr">FRAMEWORK: RING-0<br>STATUS: DORMANT</div>
+
+    <!-- Scene -->
+    <div class="scene">
+        <!-- Glass orb -->
+        <div class="orb-wrapper" id="orbWrapper">
+            <div class="orb" id="orb"></div>
+            <div class="orbital-ring"></div>
+            <div class="orbital-ring orbital-ring-2"></div>
+        </div>
+
+        <!-- Content over the orb -->
+        <div class="content">
+            <div class="tag">
+                <span class="dot"></span>
+                VOID PROTOCOL ACTIVE
+            </div>
+
+            <h1 class="title">SYNDICATE</h1>
+            <p class="desc">
+                Next-gen kernel-level architecture.<br>
+                Zero footprint. Zero trace.
+            </p>
+
+            <button class="void-btn" id="mainBtn">
+                <span>ENTER THE VOID</span>
+                <span class="arrow">→</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+        <span>© 2026 SYNDICATE</span>
+        <span>EST. Q3 2026</span>
+        <span>PRIVATE ACCESS</span>
+    </div>
+
+    <script>
+        // ===== PARTICLE FIELD (Canvas) =====
+        const canvas = document.getElementById('bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Create particles
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.speedY = (Math.random() - 0.5) * 0.2;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.fadeSpeed = Math.random() * 0.005 + 0.002;
+                this.fadingIn = Math.random() > 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Subtle mouse repulsion
+                const dx = this.x - mouseX;
+                const dy = this.y - mouseY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 200) {
+                    const force = (200 - dist) / 200 * 0.3;
+                    this.x += (dx / dist) * force;
+                    this.y += (dy / dist) * force;
+                }
+
+                // Breathing opacity
+                if (this.fadingIn) {
+                    this.opacity += this.fadeSpeed;
+                    if (this.opacity >= 0.6) this.fadingIn = false;
+                } else {
+                    this.opacity -= this.fadeSpeed;
+                    if (this.opacity <= 0.05) this.fadingIn = true;
+                }
+
+                // Wrap
+                if (this.x < -10) this.x = canvas.width + 10;
+                if (this.x > canvas.width + 10) this.x = -10;
+                if (this.y < -10) this.y = canvas.height + 10;
+                if (this.y > canvas.height + 10) this.y = -10;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        const count = Math.min(200, Math.floor((window.innerWidth * window.innerHeight) / 8000));
+        for (let i = 0; i < count; i++) particles.push(new Particle());
+
+        // Draw lines between close particles
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        const alpha = (1 - dist / 120) * 0.08;
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            drawConnections();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ===== SMOOTH CURSOR GLOW (lerp-based) =====
+        const glow = document.getElementById('cursorGlow');
+        let glowX = window.innerWidth / 2, glowY = window.innerHeight / 2;
+        let targetGlowX = glowX, targetGlowY = glowY;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            targetGlowX = e.clientX;
+            targetGlowY = e.clientY;
+        });
+
+        function updateGlow() {
+            glowX += (targetGlowX - glowX) * 0.08;
+            glowY += (targetGlowY - glowY) * 0.08;
+            glow.style.transform = `translate(${glowX - 250}px, ${glowY - 250}px)`;
+            requestAnimationFrame(updateGlow);
+        }
+        updateGlow();
+
+        // ===== SMOOTH ORB PARALLAX (lerp-based) =====
+        const orbWrapper = document.getElementById('orbWrapper');
+        let orbTargetX = 0, orbTargetY = 0;
+        let orbCurrentX = 0, orbCurrentY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            orbTargetX = ((e.clientX - cx) / cx) * 18;
+            orbTargetY = ((e.clientY - cy) / cy) * 18;
+        });
+
+        function updateOrb() {
+            orbCurrentX += (orbTargetX - orbCurrentX) * 0.04;
+            orbCurrentY += (orbTargetY - orbCurrentY) * 0.04;
+            orbWrapper.style.transform = `translate(calc(-50% + ${orbCurrentX}px), calc(-50% + ${orbCurrentY}px))`;
+            requestAnimationFrame(updateOrb);
+        }
+        updateOrb();
+
+        // ===== BUTTON PULSE (soft) =====
+        document.getElementById('mainBtn').addEventListener('click', function (e) {
+            const orb = document.getElementById('orb');
+            orb.style.transition = 'box-shadow 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            orb.style.boxShadow = '0 0 150px rgba(255,255,255,0.25), 0 0 300px rgba(255,255,255,0.08), inset 0 0 80px rgba(255,255,255,0.12)';
+            orb.style.transform = 'scale(1.08)';
+            setTimeout(() => {
+                orb.style.boxShadow = '';
+                orb.style.transform = '';
+                setTimeout(() => { orb.style.transition = ''; }, 1000);
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

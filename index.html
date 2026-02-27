@@ -6,116 +6,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S Y N D I C A T E</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Premium undetected software solutions. Coming soon.">
-    <!-- For icons -->
+    <meta name="description" content="Premium undetected software solutions.">
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
+    <!-- Particle Canvas -->
+    <canvas id="particleBg"></canvas>
+
+    <!-- Ambient overlays -->
+    <div class="grain-overlay"></div>
+    <div class="vignette-overlay"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
     <!-- Premium Dynamic Island -->
-    <div class="dynamic-island-wrapper">
+    <div class="dynamic-island-wrapper reveal-item" data-delay="1800">
         <div class="dynamic-island interactable-island" id="island">
-            <!-- State 1: Default (Idle) -->
             <div class="island-content state-default">
-                <div class="status-ring">
-                    <div class="ring-core"></div>
-                </div>
-                <span class="island-text">AWAITING DEPLOYMENT</span>
+                <div class="status-dot pulse-steady"></div>
+                <span class="island-text">STANDBY</span>
             </div>
-
-            <!-- State 2: Hover (Expand slightly) -->
             <div class="island-content state-hover">
-                <i data-feather="terminal" class="icon-small"></i>
-                <span class="island-text">VIEW AUTH HASH</span>
+                <i data-feather="key" class="icon-small"></i>
+                <span class="island-text">AUTH MODE</span>
             </div>
-
-            <!-- State 3: Expanded (Show Code) -->
             <div class="island-content state-expanded">
                 <div class="hash-display">
-                    <span class="hash-label">AUTH HASH:</span>
-                    <code id="vhash">V58-7fI-cdN-</code>
+                    <span class="hash-label">TOKEN:</span>
+                    <code id="vhash">SYN-0x9A-Void</code>
                 </div>
-                <button class="icon-btn" onclick="copyHash(event)" aria-label="Copy Hash">
+                <button class="icon-btn" onclick="copyHash(event)" aria-label="Copy">
                     <i data-feather="copy" class="icon-small"></i>
                 </button>
             </div>
-
-            <!-- State 4: Copied Success -->
             <div class="island-content state-success">
-                <i data-feather="check-circle" class="icon-small success-icon"></i>
-                <span class="island-text">HASH ACQUIRED</span>
+                <i data-feather="check" class="icon-small success-icon"></i>
+                <span class="island-text">COPIED</span>
             </div>
         </div>
     </div>
 
-    <!-- Background Elements -->
-    <div class="bg-elements">
-        <div class="liquid-shape shape-1"></div>
-        <div class="liquid-shape shape-2"></div>
-        <div class="noise"></div>
-        <div class="grid"></div>
-        <!-- Center glow behind the panel -->
-        <div class="center-glow"></div>
-    </div>
+    <!-- Corner Labels -->
+    <div class="corner-label corner-tl reveal-item" data-delay="2200">SYN//CORE<br>V1.0.0</div>
+    <div class="corner-label corner-tr reveal-item" data-delay="2200">FRAMEWORK: RING-0<br>ENCRYPTION: AES-256</div>
 
     <main class="container">
-        <div class="glass-module interactable main-panel" id="main-panel">
-            <header class="module-header">
-                <div class="controls">
-                    <div class="btn close"></div>
-                    <div class="btn minimize"></div>
-                    <div class="btn maximize"></div>
-                </div>
-                <div class="version">SYS_STATUS: STANDBY</div>
-            </header>
+        <!-- Liquid Glass Panel -->
+        <div class="liquid-glass-module main-panel interactable" id="main-panel">
+            <div class="glass-reflection"></div>
+            <div class="glass-edge-glow"></div>
 
             <div class="content-wrapper">
-                <div class="status-badge-large">
-                    <div class="indicator pulse slow"></div>
+                <div class="status-badge-minimal reveal-item" data-delay="300">
+                    <div class="dot slow-pulse"></div>
                     NETWORK OFFLINE
                 </div>
 
-                <h1 class="logo-text glitch" data-text="SYNDICATE">SYNDICATE</h1>
+                <h1 class="logo-text reveal-item" data-delay="500">SYNDICATE</h1>
 
-                <p class="subtitle typing-effect">
-                    A new era of undetected software is loading.<br>
+                <p class="subtitle reveal-item" data-delay="800">
+                    A new era of undetected software.<br>
                     Private ring-0 framework. Invite only.
                 </p>
 
-                <div class="countdown-display">
-                    <span>COMING SOON</span>
+                <div class="divider reveal-item" data-delay="1000"></div>
+
+                <div class="features reveal-item" data-delay="1100">
+                    <div class="feature-item">
+                        <i data-feather="shield" class="feature-icon"></i>
+                        <span>KERNEL-LEVEL</span>
+                    </div>
+                    <div class="feature-item">
+                        <i data-feather="eye-off" class="feature-icon"></i>
+                        <span>ZERO TRACE</span>
+                    </div>
+                    <div class="feature-item">
+                        <i data-feather="lock" class="feature-icon"></i>
+                        <span>ENCRYPTED</span>
+                    </div>
                 </div>
 
-                <div class="action-area">
-                    <button class="primary-btn interactable" onclick="document.getElementById('island').click()">
+                <div class="action-area reveal-item" data-delay="1300">
+                    <button class="glass-btn interactable" onclick="document.getElementById('island').click()">
                         <span class="btn-text">REQUEST ACCESS</span>
-                        <div class="btn-glow"></div>
+                        <span class="btn-arrow">→</span>
                     </button>
-                    <!-- Verify code is now purely in the Dynamic Island -->
-                    <div class="sub-hint">Operations commence Q3 2026.</div>
+                    <div class="sub-hint">Operations commence Q3 2026</div>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Bottom Bar -->
+    <div class="bottom-bar reveal-item" data-delay="2000">
+        <span>© 2026 SYNDICATE</span>
+        <span>ALL RIGHTS RESERVED</span>
+    </div>
+
     <script>
-        // Initialize Icons
+        // Init icons
         feather.replace();
 
-        // Advanced Dynamic Island Logic
+        // ===== CINEMATIC REVEAL SYSTEM =====
+        const revealItems = document.querySelectorAll('.reveal-item');
+        revealItems.forEach(item => {
+            const delay = parseInt(item.dataset.delay) || 0;
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(25px)';
+            item.style.filter = 'blur(8px)';
+            item.style.transition = `opacity 2s cubic-bezier(0.16, 1, 0.3, 1), transform 2s cubic-bezier(0.16, 1, 0.3, 1), filter 2s cubic-bezier(0.16, 1, 0.3, 1)`;
+            item.style.transitionDelay = `${delay}ms`;
+        });
+
+        // Trigger after a small frame delay so the browser can paint first
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                revealItems.forEach(item => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                    item.style.filter = 'blur(0)';
+                });
+            });
+        });
+
+        // ===== DYNAMIC ISLAND =====
         const island = document.getElementById('island');
-        let islandState = 'default'; // default, expanded, success
+        let islandState = 'default';
         let resetTimeout;
 
         island.addEventListener('click', (e) => {
-            // Prevent trigger if clicking the copy button specifically
             if (e.target.closest('.icon-btn')) return;
-
             if (islandState === 'default') {
                 island.classList.add('expanded');
                 islandState = 'expanded';
-
-                // Auto close after 5 seconds if no interaction
                 startResetTimer();
             } else if (islandState === 'expanded') {
                 island.classList.remove('expanded');
@@ -124,20 +147,8 @@
             }
         });
 
-        // Pause reset timer when interacting with expanded island
-        island.addEventListener('mouseenter', () => {
-            if (islandState === 'expanded') {
-                clearTimeout(resetTimeout);
-            }
-        });
-
-        island.addEventListener('mouseleave', () => {
-            if (islandState === 'expanded') {
-                startResetTimer();
-            }
-            // Removing a custom hover class dynamically to prevent sticky hover states
-            island.classList.remove('force-hover');
-        });
+        island.addEventListener('mouseenter', () => { if (islandState === 'expanded') clearTimeout(resetTimeout); });
+        island.addEventListener('mouseleave', () => { if (islandState === 'expanded') startResetTimer(); });
 
         function startResetTimer() {
             clearTimeout(resetTimeout);
@@ -149,59 +160,138 @@
             }, 5000);
         }
 
-        // Copy Hash with Island animation
         window.copyHash = function (e) {
-            e.stopPropagation(); // Prevent closing the island immediately
-
-            const hash = document.getElementById('vhash').innerText;
-            navigator.clipboard.writeText(hash);
-
-            // Trigger success state
+            e.stopPropagation();
+            navigator.clipboard.writeText(document.getElementById('vhash').innerText);
             island.classList.remove('expanded');
             island.classList.add('success');
             islandState = 'success';
-
             clearTimeout(resetTimeout);
-
-            setTimeout(() => {
-                island.classList.remove('success');
-                islandState = 'default';
-            }, 2000);
+            setTimeout(() => { island.classList.remove('success'); islandState = 'default'; }, 2000);
         }
 
-        // Liquid Glass Mouse Tracking Effect
-        const interactables = document.querySelectorAll('.interactable, .interactable-island');
+        // ===== SMOOTH CURSOR GLOW (lerp) =====
+        const glow = document.getElementById('cursorGlow');
+        let glowX = window.innerWidth / 2, glowY = window.innerHeight / 2;
+        let targetGX = glowX, targetGY = glowY;
+
+        document.addEventListener('mousemove', (e) => { targetGX = e.clientX; targetGY = e.clientY; });
+
+        function animateGlow() {
+            glowX += (targetGX - glowX) * 0.06;
+            glowY += (targetGY - glowY) * 0.06;
+            glow.style.transform = `translate(${glowX - 250}px, ${glowY - 250}px)`;
+            requestAnimationFrame(animateGlow);
+        }
+        animateGlow();
+
+        // ===== SMOOTH 3D TILT (lerp) =====
+        const panel = document.getElementById('main-panel');
+        let tiltTargetX = 0, tiltTargetY = 0;
+        let tiltCurrentX = 0, tiltCurrentY = 0;
 
         document.addEventListener('mousemove', (e) => {
-            interactables.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                el.style.setProperty('--x', `${x}px`);
-                el.style.setProperty('--y', `${y}px`);
-
-                // 3D Tilt effect only for main panel
-                if (el.id === 'main-panel') {
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-
-                    const rotateX = ((y - centerY) / centerY) * -1.5; // max tilt 1.5deg
-                    const rotateY = ((x - centerX) / centerX) * 1.5;
-
-                    el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-                }
+            // Interactable glow
+            document.querySelectorAll('.interactable, .interactable-island').forEach(el => {
+                const r = el.getBoundingClientRect();
+                el.style.setProperty('--x', `${e.clientX - r.left}px`);
+                el.style.setProperty('--y', `${e.clientY - r.top}px`);
             });
+
+            const rect = panel.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            tiltTargetX = ((e.clientY - cy) / (rect.height / 2)) * -2.5;
+            tiltTargetY = ((e.clientX - cx) / (rect.width / 2)) * 2.5;
         });
 
-        // Reset tilt on leave
-        document.getElementById('main-panel').addEventListener('mouseleave', function () {
-            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-            this.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-            setTimeout(() => {
-                this.style.transition = 'none'; // Re-enable instantaneous mouse tracking
-            }, 500);
-        });
+        function animateTilt() {
+            tiltCurrentX += (tiltTargetX - tiltCurrentX) * 0.05;
+            tiltCurrentY += (tiltTargetY - tiltCurrentY) * 0.05;
+            panel.style.transform = `perspective(1200px) rotateX(${tiltCurrentX}deg) rotateY(${tiltCurrentY}deg) scale3d(1.01, 1.01, 1.01)`;
+            requestAnimationFrame(animateTilt);
+        }
+        animateTilt();
+
+        // ===== PARTICLE FIELD (Canvas) =====
+        const canvas = document.getElementById('particleBg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resize();
+        window.addEventListener('resize', resize);
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.2 + 0.2;
+                this.speedX = (Math.random() - 0.5) * 0.15;
+                this.speedY = (Math.random() - 0.5) * 0.15;
+                this.opacity = Math.random() * 0.4 + 0.05;
+                this.fadeSpeed = Math.random() * 0.003 + 0.001;
+                this.fadingIn = Math.random() > 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Mouse repulsion
+                const dx = this.x - targetGX;
+                const dy = this.y - targetGY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 150) {
+                    const force = (150 - dist) / 150 * 0.2;
+                    this.x += (dx / dist) * force;
+                    this.y += (dy / dist) * force;
+                }
+
+                if (this.fadingIn) { this.opacity += this.fadeSpeed; if (this.opacity >= 0.5) this.fadingIn = false; }
+                else { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.03) this.fadingIn = true; }
+
+                if (this.x < -10) this.x = canvas.width + 10;
+                if (this.x > canvas.width + 10) this.x = -10;
+                if (this.y < -10) this.y = canvas.height + 10;
+                if (this.y > canvas.height + 10) this.y = -10;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        const pCount = Math.min(150, Math.floor((window.innerWidth * window.innerHeight) / 10000));
+        for (let i = 0; i < pCount; i++) particles.push(new Particle());
+
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - dist / 100) * 0.06})`;
+                        ctx.lineWidth = 0.4;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            drawConnections();
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
     </script>
 </body>
 

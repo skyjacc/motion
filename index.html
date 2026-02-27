@@ -1,37 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon</title>
+    <title>Motion - Experience the Future</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="We are working on something amazing. Stay tuned.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Next generation digital experiences.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
-    <div class="background">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+    <div class="ambient-background">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="noise-overlay"></div>
     </div>
-    
-    <div class="container glass">
-        <h1>Something extraordinary is coming.</h1>
-        <p class="subtitle">We're crafting a new digital experience. Stay tuned.</p>
-        
-        <div class="verification-box">
-            <span class="verification-label">Verification Code:</span>
-            <!-- Hidden verification required by domain provider -->
-            <code class="verification-code">V58-7fI-cdN-</code>
+
+    <main class="hero">
+        <div class="glass-panel">
+            <div class="badge">
+                <span class="pulse"></span>
+                System Initializing
+            </div>
+
+            <h1 class="title">
+                Enter the <br>
+                <span class="gradient-text">Next Dimension</span>
+            </h1>
+
+            <p class="description">
+                We are building the infrastructure for tomorrow's digital ecosystem. Prepare for liftoff.
+            </p>
+
+            <div class="verification-wrapper">
+                <div class="verification-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>Domain Verification required</span>
+                </div>
+                <div class="code-container">
+                    <code id="verifyCode">1L8-IG6-GIA-</code>
+                    <button class="copy-btn" onclick="copyCode()" aria-label="Copy code">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="action-group">
+                <a href="#" class="btn btn-primary" onclick="window.location.reload();">
+                    Verify Now
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
         </div>
-        
-        <div class="social-links">
-            <a href="#" class="social-btn">Get Notified</a>
-        </div>
-    </div>
-    
-    <footer>
-        <p>&copy; 2026. All rights reserved.</p>
-    </footer>
+    </main>
+
+    <script>
+        function copyCode() {
+            const code = document.getElementById('verifyCode').innerText;
+            navigator.clipboard.writeText(code);
+            const btn = document.querySelector('.copy-btn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+            }, 2000);
+        }
+    </script>
 </body>
+
 </html>
